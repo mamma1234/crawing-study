@@ -1,0 +1,9 @@
+python -m venv venv
+venv\Scripts\activate
+pip install scrapy
+pip install selenium
+pip install beautifulsoup4
+scrapy startproject myscrapy1
+
+cd myscrapy1
+scrapy crawl mybots
