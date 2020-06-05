@@ -5,5 +5,7 @@ pip install selenium
 pip install beautifulsoup4
 scrapy startproject myscrapy1
 
+scrapy startproject camping
+
 cd myscrapy1
 scrapy crawl mybots
