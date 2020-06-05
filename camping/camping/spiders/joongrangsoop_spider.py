@@ -97,7 +97,7 @@ class JoongrangsoopSpiderSpider(scrapy.Spider):
             Saturday = 7 #7 토요일
             for week in weeks:
                 try:
-                    # print('index', index)
+                    print('======================>', week)
                     path = '//*[@id="calendarTable"]/tbody/tr['+str(week)+']/td['+str(Saturday)+']/a'
                     self.browser.find_element_by_xpath(path).click()
                     time.sleep(1)
