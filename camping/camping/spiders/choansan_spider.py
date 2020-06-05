@@ -157,7 +157,9 @@ class ChoansanSpider(scrapy.Spider):
                 pass
 
         time.sleep(1)
+        print('--------------------------------------------')
         print('emptys:', emptys)
+        print('--------------------------------------------')
         self.browser.quit()
         return emptys
 

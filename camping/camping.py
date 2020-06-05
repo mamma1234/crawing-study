@@ -1,6 +1,8 @@
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from apscheduler.schedulers.twisted import TwistedScheduler
+from camping.spiders.choansan_spider import ChoansanSpider
+from camping.spiders.gangdong_spider import GangdongSpider
 from camping.spiders.joongrangsoop_spider import JoongrangsoopSpiderSpider
 
 from datetime import date
@@ -10,6 +12,8 @@ import calendar
 
 process = CrawlerProcess(get_project_settings())
 scheduler = TwistedScheduler()
+scheduler.add_job(process.crawl, 'interval', args=[ChoansanSpider], seconds=10)
+scheduler.add_job(process.crawl, 'interval', args=[GangdongSpider], seconds=10)
 scheduler.add_job(process.crawl, 'interval', args=[JoongrangsoopSpiderSpider], seconds=10)
 scheduler.start()
 process.start(False)

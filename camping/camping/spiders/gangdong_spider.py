@@ -141,7 +141,9 @@ class GangdongSpider(scrapy.Spider):
 
 
 
+        print('--------------------------------------------')
         print('emptys:', emptys)
+        print('--------------------------------------------')
         # elements1 = self.browser.find_elements_by_xpath('//*[@id="contents"]/div[3]/div[2]/div/img').get_attribute('alt')
         # for element1 in elements1:
         #     print(element1)
