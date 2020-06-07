@@ -102,7 +102,7 @@ class JoongrangsoopSpiderSpider(scrapy.Spider):
 
             weeks = [2,3,4,5,6,7] #주차
             Saturday = 7 #7 토요일
-            for week in weeks:
+            for week in reversed(weeks):
                 try:
                     print('======================>', week)
                     path = '//*[@id="calendarTable"]/tbody/tr['+str(week)+']/td['+str(Saturday)+']/a'
@@ -113,7 +113,15 @@ class JoongrangsoopSpiderSpider(scrapy.Spider):
 
                     # time.sleep(5)
                     empty = self.search()
-                    emptys.extend(empty)
+                    if len(empty) > 0:
+                        emptys.extend(empty)
+
+                    if len(emptys) > 0:
+                        print('--------------------------------------------')
+                        print('emptys:', emptys)
+                        print('--------------------------------------------')
+                        # pass
+                        return emptys
 
 
                 except Exception as identifier:
@@ -168,16 +176,26 @@ class JoongrangsoopSpiderSpider(scrapy.Spider):
 
         day = selector.xpath('//*[@class="select_day"]/a/text()').extract()
         # print('click =============>', day[0], '<=============')
-        rows = selector.xpath('//*[@id="contents"]/div[3]/div[2]/div/img/@alt').extract()
+        # rows = selector.xpath('//*[@id="contents"]/div[3]/div[2]/div/img/@alt').extract()
+        rows = selector.xpath('//*[@id="contents"]/div[3]/div[2]/div/img[contains(@class,"product_box")]')
+
         # print(rows)
-        for row in rows:
-            if "시설 약도" not in row and "예약완료" not in row:
-                # print(row)
+        
+        for row in reversed(rows):
+            # print(row)
+            alt = row.xpath('@alt').extract()
+            id = row.xpath('@id').extract()
+            print(alt, ":", id)
+            if "시설 약도" not in alt[0] and "예약완료" not in alt[0]:
                 # emptys.append({'day':day, 'row': row})
 
                 empty = CampingItem()
                 empty['day']=day
-                empty['row']=row
+                empty['row']=alt
                 emptys.append(empty)
 
+                self.browser.find_element_by_xpath('//*[@id="'+id[0]+'"]').click()
+                self.browser.find_element_by_xpath('//*[@id="contents"]/div[1]/div/p/a').click()
+                
+                return emptys
         return emptys
