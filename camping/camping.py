@@ -14,7 +14,7 @@ process = CrawlerProcess(get_project_settings())
 scheduler = TwistedScheduler()
 # scheduler.add_job(process.crawl, 'interval', args=[ChoansanSpider], seconds=10)
 # scheduler.add_job(process.crawl, 'interval', args=[GangdongSpider], seconds=10)
-scheduler.add_job(process.crawl, 'interval', args=[JoongrangsoopSpiderSpider], seconds=30)
+scheduler.add_job(process.crawl, 'interval', args=[JoongrangsoopSpiderSpider], seconds=60)
 scheduler.start()
 process.start(False)
 
