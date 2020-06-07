@@ -22,7 +22,7 @@ def getSaturday():
 
     cal = calendar.monthcalendar(thisyear, thismonth)
     for week in cal:
-        if week[calendar.SATURDAY]:
+        if week[calendar.THURSDAY.SATURDAY]:
             print('%2s: %2s' % (str(thismonth).zfill(2), str(week[calendar.SATURDAY]).zfill(2)))
             thissaturday.append({'year':thisyear, 'month': thismonth, 'day':week[calendar.SATURDAY]})
 
@@ -159,7 +159,8 @@ class ChoansanSpider(scrapy.Spider):
         time.sleep(1)
         print('--------------------------------------------')
         print('emptys:', emptys)
-        print('--------------------------------------------')
+        print('--------------------------------------------') 
+        # if len(emptys) == 0:
         self.browser.quit()
         return emptys
 

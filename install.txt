@@ -3,9 +3,13 @@ venv\Scripts\activate
 pip install scrapy
 pip install selenium
 pip install beautifulsoup4
+pip install apscheduler
 scrapy startproject myscrapy1
 
 scrapy startproject camping
 
 cd myscrapy1
 scrapy crawl mybots
+
+Microsoft Visual C++ Build Tools
+    error: Microsoft Visual C++ 14.0 is required. Get it with "Microsoft Visual C++ Build Tools": https://visualstudio.microsoft.com/downloads/

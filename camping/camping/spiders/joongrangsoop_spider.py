@@ -85,6 +85,13 @@ class JoongrangsoopSpiderSpider(scrapy.Spider):
                                             # //*[@id="calendarTable"]/tbody/tr[7]/td[7]/a
         # thissaturday, nextsaturday = getSaturday()
         # print(thissaturday, nextsaturday)
+
+        self.browser.find_element_by_xpath('//*[@id="login_id"]').send_keys('mamma1234')
+        self.browser.find_element_by_xpath('//*[@id="login_passwd"]').send_keys('qkrtjgml0!')
+        self.browser.find_element_by_xpath('//*[@id="header"]/div[2]/fieldset/form/ul[1]/li[3]/a').click()
+        time.sleep(1)
+
+
         emptys=[]
         for loop in [1, 2]:
             if loop == 2:
@@ -148,7 +155,8 @@ class JoongrangsoopSpiderSpider(scrapy.Spider):
         #     #     print('예약가능')
         #     #     print(colum)
         #     print("******************************")
-        self.browser.quit()
+        if len(emptys) == 0:
+            self.browser.quit()
         return emptys
         # pass
 
