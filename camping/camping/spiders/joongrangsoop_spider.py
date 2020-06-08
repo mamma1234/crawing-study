@@ -93,7 +93,8 @@ class JoongrangsoopSpiderSpider(scrapy.Spider):
 
 
         emptys=[]
-        for loop in [1, 2]:
+        for loop in [2]:
+        # for loop in [1, 2]:
             if loop == 2:
                 css = '#contents > div.aside > div.calendar_box > div.calendar_paginate_box > ul.calendar_paginate > li.next > a'
                 self.browser.find_element_by_css_selector(css).click()
