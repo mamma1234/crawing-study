@@ -109,7 +109,7 @@ class GangdongSpider(scrapy.Spider):
                 time.sleep(2)
 
             weeks = [2,3,4,5,6,7] #주차
-            Saturday = 4 #7 토요일
+            Saturday = 7 #7 토요일
             for week in weeks:
                 try:
                     print('======================>', week)
