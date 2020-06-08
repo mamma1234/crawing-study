@@ -80,7 +80,8 @@ class GangdongSpider(scrapy.Spider):
 
 
         try:
-            self.browser.find_element_by_css_selector("#notice_layer_582 > div > div > div > fieldset > ul > li > button").click()
+            # self.browser.find_element_by_css_selector("#notice_layer_582 > div > div > div > fieldset > ul > li > button").click()
+            self.browser.find_element_by_xpath("/html/body/div[5]/div/div/div/fieldset/ul/li/button").click()
         except Exception as identifier:
             print("Processing Exception:", identifier)
 
@@ -92,6 +93,13 @@ class GangdongSpider(scrapy.Spider):
                                             # //*[@id="calendarTable"]/tbody/tr[7]/td[7]/a
         # thissaturday, nextsaturday = getSaturday()
         # print(thissaturday, nextsaturday)
+
+        self.browser.find_element_by_xpath('//*[@id="login_id"]').send_keys('mamma1234')
+        self.browser.find_element_by_xpath('//*[@id="login_passwd"]').send_keys('qkrghwls0!')
+        self.browser.find_element_by_xpath('//*[@id="header"]/div[2]/fieldset/form/ul[1]/li[3]/a').click()
+        time.sleep(1)
+
+
         emptys=[]
         for loop in [1, 2]:
             if loop == 2:
@@ -101,7 +109,7 @@ class GangdongSpider(scrapy.Spider):
                 time.sleep(2)
 
             weeks = [2,3,4,5,6,7] #주차
-            Saturday = 7 #7 토요일
+            Saturday = 4 #7 토요일
             for week in weeks:
                 try:
                     print('======================>', week)
@@ -114,23 +122,40 @@ class GangdongSpider(scrapy.Spider):
                     # time.sleep(5)
                     
             
-                    path = '//*[@id="가족캠핑장"]'
-                    self.browser.find_element_by_xpath(path).click()
-                    time.sleep(1)
-                    empty = self.search()
-                    emptys.extend(empty)
-
                     path = '//*[@id="오토캠핑장"]'
                     self.browser.find_element_by_xpath(path).click()
                     time.sleep(1)
                     empty = self.search()
-                    emptys.extend(empty)
+                    if len(empty) > 0:
+                        emptys.extend(empty)
 
-                    path = '//*[@id="매화나무캠핑장"]'
+                    if len(emptys) > 0:
+                        print('--------------------------------------------')
+                        print('emptys:', emptys)
+                        print('--------------------------------------------')
+                        # pass
+                        return emptys
+
+
+                    path = '//*[@id="가족캠핑장"]'
                     self.browser.find_element_by_xpath(path).click()
                     time.sleep(1)
                     empty = self.search()
-                    emptys.extend(empty)
+                    if len(empty) > 0:
+                        emptys.extend(empty)
+
+                    if len(emptys) > 0:
+                        print('--------------------------------------------')
+                        print('emptys:', emptys)
+                        print('--------------------------------------------')
+                        # pass
+                        return emptys
+
+                    # path = '//*[@id="매화나무캠핑장"]'
+                    # self.browser.find_element_by_xpath(path).click()
+                    # time.sleep(1)
+                    # empty = self.search()
+                    # emptys.extend(empty)
 
 
                 except Exception as identifier:
@@ -172,7 +197,8 @@ class GangdongSpider(scrapy.Spider):
         #     #     print('예약가능')
         #     #     print(colum)
         #     print("******************************")
-        self.browser.quit()
+        if len(emptys) == 0:
+            self.browser.quit()
         return emptys
         # pass
 
@@ -184,16 +210,26 @@ class GangdongSpider(scrapy.Spider):
 
         day = selector.xpath('//*[@class="select_day"]/a/text()').extract()
         # print('click =============>', day[0], '<=============')
-        rows = selector.xpath('//*[@id="contents"]/div[3]/div[2]/div/img/@alt').extract()
+        # rows = selector.xpath('//*[@id="contents"]/div[3]/div[2]/div/img/@alt').extract()
+        rows = selector.xpath('//*[@id="contents"]/div[3]/div[2]/div/img[contains(@class,"product_box")]')
         # print(rows)
         for row in rows:
-            if "시설 약도" not in row and "예약완료" not in row:
+            alt = row.xpath('@alt').extract()
+            id = row.xpath('@id').extract()
+            print(alt, ":", id)
+            if "시설 약도" not in alt[0] and "예약완료" not in alt[0]:            
+            # if "시설 약도" not in row and "예약완료" not in row:
                 # print(row)
                 # emptys.append({'day':day, 'row': row})
 
                 empty = CampingItem()
                 empty['day']=day
-                empty['row']=row
+                empty['row']=alt
                 emptys.append(empty)
+
+                self.browser.find_element_by_xpath('//*[@id="'+id[0]+'"]').click()
+                self.browser.find_element_by_xpath('//*[@id="contents"]/div[1]/div/p/a').click()
+                
+                return emptys
 
         return emptys
