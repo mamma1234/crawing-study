@@ -174,14 +174,41 @@ class ChoansanSpider(scrapy.Spider):
         time.sleep(1)
         html = self.browser.find_element_by_xpath('//*').get_attribute('outerHTML')
         selector = Selector(text=html)
+
+        prefix = ""
+        test = '//*[@id="m_chk_'+str(start)+'"]/@data-cseq'
+        check = selector.xpath(test).extract()
+        if len(check) > 0:
+            prefix = "m_"
+
+        # print('prefix:',prefix)
+
+        # self.browser.find_element_by_id(prefix+'chk_39').check()
+        # time.sleep(1)
+        # self.browser.find_element_by_id(prefix+'chk_39').click()
+        # time.sleep(1)
+        
+        # self.browser.find_element_by_css_selector("input#"+prefix+"chk_39").click() 
+        # time.sleep(1)
+        # self.browser.find_element_by_xpath('/html/body/div[3]/div[1]/div[2]/form/div[1]/div[2]/div[2]/div/ul/li[1]/input').click()
+        # self.browser.find_element_by_xpath('//*[@id="reserved_submit"]').click()
+        # self.browser.find_element_by_xpath('//[@id="'+prefix+'chk_'+str(start)+'"]').check()
+        # self.browser.find_elements_by_xpath("//input[@type='radio' and @id='"+prefix+"chk_"+str(start)+"']")[0].click()
+        #m_chk_39
+
         for n in range(start, end): #39 ~ 65
             try:
                 # print(n)
-                path = '//*[@id="m_chk_'+str(n)+'"]/@data-cseq'
+                path = '//*[@id="'+prefix+'chk_'+str(n)+'"]/@data-cseq'
+                # print(path)
                 rows = selector.xpath(path).extract()
                 # print(rows)
-                path2 = '//*[@id="m_chk_'+str(n)+'"]/@disabled'
+                path2 = '//*[@id="'+prefix+'chk_'+str(n)+'"]/@disabled'
                 rows2 = selector.xpath(path2).extract()
+
+                path3 = '//*[@id="'+prefix+'chk_'+str(n)+'"]/@value'
+                rows3 = selector.xpath(path3).extract()
+                print(rows3, len(rows3))
                 # print(rows2, len(rows2) )
                 if len(rows2) < 1:
                     empty = CampingItem()
@@ -189,14 +216,17 @@ class ChoansanSpider(scrapy.Spider):
                     empty['group']=group
                     empty['row']=rows[0]
                     emptys.append(empty)
+                    
 
-
-                    self.browser.find_element_by_xpath('//*[@id="m_chk_'+str(n)+'"]').click()
+                    self.browser.find_element_by_css_selector("input[type='radio'][value='"+rows3[0]+"']").click()
+                    # self.browser.find_element_by_id(prefix+'chk_'+str(n)).click()
+                    # self.browser.find_element_by_xpath('//[@id="'+prefix+'chk_'+str(n)+'"]').click()
                     self.browser.find_element_by_xpath('//*[@id="reserved_submit"]').click()
                     alert = self.browser.switch_to.alert
                     alert.accept()
                     # print('emptys:', emptys)
-
+                    
+                    # time.sleep(1)
                     return emptys
             except Exception as identifier:
                 print("Processing Exception:", identifier)
