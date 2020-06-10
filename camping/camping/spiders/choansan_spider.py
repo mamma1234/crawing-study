@@ -70,8 +70,8 @@ class ChoansanSpider(scrapy.Spider):
         emptys=[]
             # 당월의 토요일 구하기
             # 다음달의 토요일 구하기
-        for loop in [2]:
-        # for loop in [1, 2]:
+        # for loop in [2]:
+        for loop in [1, 2]:
             if loop == 2:
                 css = '#frm > div.cnt_wrap2 > div.left_menu > div.calendar_box2.type2.pj2 > div > div > div.clndr-control-button.rightalign'
                 self.browser.find_element_by_css_selector(css).click()
