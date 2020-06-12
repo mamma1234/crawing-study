@@ -4,6 +4,7 @@ from apscheduler.schedulers.twisted import TwistedScheduler
 from camping.spiders.choansan_spider import ChoansanSpider
 from camping.spiders.gangdong_spider import GangdongSpider
 from camping.spiders.joongrangsoop_spider import JoongrangsoopSpiderSpider
+from camping.spiders.imjingak_spider import ImjingakSpider
 
 from datetime import date
 from datetime import timedelta
@@ -19,6 +20,7 @@ try:
     scheduler.add_job(process.crawl, 'interval', args=[ChoansanSpider], seconds=15)
     # scheduler.add_job(process.crawl, 'interval', args=[GangdongSpider], seconds=10)
     scheduler.add_job(process.crawl, 'interval', args=[JoongrangsoopSpiderSpider], seconds=15)
+    scheduler.add_job(process.crawl, 'interval', args=[ImjingakSpider], seconds=15)
     scheduler.start()
     process.start(False)
 except (KeyboardInterrupt, SystemExit):
