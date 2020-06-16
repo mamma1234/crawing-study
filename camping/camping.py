@@ -5,6 +5,8 @@ from camping.spiders.choansan_spider import ChoansanSpider
 from camping.spiders.gangdong_spider import GangdongSpider
 from camping.spiders.joongrangsoop_spider import JoongrangsoopSpiderSpider
 from camping.spiders.imjingak_spider import ImjingakSpider
+from camping.spiders.pyeongtaek_spider import PyeongtaekSpider
+
 
 from datetime import date
 from datetime import timedelta
@@ -17,10 +19,11 @@ import calendar
 try:
     process = CrawlerProcess(get_project_settings())
     scheduler = TwistedScheduler()
-    scheduler.add_job(process.crawl, 'interval', args=[ChoansanSpider], seconds=15)
+    # scheduler.add_job(process.crawl, 'interval', args=[ChoansanSpider], seconds=15)
     # scheduler.add_job(process.crawl, 'interval', args=[GangdongSpider], seconds=10)
     scheduler.add_job(process.crawl, 'interval', args=[JoongrangsoopSpiderSpider], seconds=15)
-    scheduler.add_job(process.crawl, 'interval', args=[ImjingakSpider], seconds=15)
+    # scheduler.add_job(process.crawl, 'interval', args=[ImjingakSpider], seconds=15)
+    scheduler.add_job(process.crawl, 'interval', args=[PyeongtaekSpider], seconds=15)
     scheduler.start()
     process.start(False)
 except (KeyboardInterrupt, SystemExit):

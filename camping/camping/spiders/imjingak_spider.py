@@ -5,6 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
 from scrapy.selector import Selector
 from camping.items import CampingItem
 
@@ -127,6 +128,9 @@ class ImjingakSpider(scrapy.Spider):
                         if len(empty) > 0:
                             emptys.extend(empty)
 
+                            return emptys
+                            
+
 
                     place2 = text2[0].split('/')[0].strip()
                     if place2 != '0':
@@ -135,14 +139,17 @@ class ImjingakSpider(scrapy.Spider):
                         if len(empty) > 0:
                             emptys.extend(empty)
 
+                            return emptys
 
-                    place6 = text6[0].split('/')[0].strip()
-                    if place6 != '0':
-                        # print(text6[0].split('/')[0].strip())
-                        empty = self.search(day, '렌탈캠핑존 A', 'site_rca', '//*[@id="contents"]/div/div[8]/div[1]/button[6]')   
-                        if len(empty) > 0:
-                            emptys.extend(empty)
-           
+                    # place6 = text6[0].split('/')[0].strip()
+                    # if place6 != '0':
+                    #     # print(text6[0].split('/')[0].strip())
+                    #     empty = self.search(day, '렌탈캠핑존 A', 'site_rca', '//*[@id="contents"]/div/div[8]/div[1]/button[6]')   
+                    #     if len(empty) > 0:
+                    #         emptys.extend(empty)
+
+                    #         return emptys
+
                     # return None
 
                     # path = '//*[@id="td-2020-06-25"]'
@@ -158,13 +165,13 @@ class ImjingakSpider(scrapy.Spider):
                     # for group in groups:
                     #     empty = self.search(day, group["group"], group["start"], group["end"])
                     
-
                     if len(emptys) > 0:
                         print('--------------------------------------------')
                         print('emptys:', emptys)
                         print('--------------------------------------------')
                         # pass
                         return emptys
+
 
                 except Exception as identifier:
                     print("Processing Exception:", identifier)
@@ -199,6 +206,7 @@ class ImjingakSpider(scrapy.Spider):
         # print(rows)
         
         for row in rows:
+            # print(row)
             spantext = row.xpath('span/text()').extract()
             print(day, zone, spantext)
 
@@ -214,10 +222,71 @@ class ImjingakSpider(scrapy.Spider):
                 empty['row']=inputvalue
                 emptys.append(empty)
 
-                check = self.browser.find_element_by_id(inputid[0])
-                if check.get_attribute("checked") == "true":
-                    check.click()
+                # check = self.browser.find_element_by_id(inputid[0])
+                # if check.get_attribute("checked") == "true":
+                #     check.click()
                     
+                # 동의 버튼
+                self.browser.find_element_by_xpath('//*[@id="contents"]/div/div[7]/label').click() 
+                element = WebDriverWait(self.browser, 10).until(
+                    EC.presence_of_element_located((By.ID, "contents"))
+                ) 
+                self.browser.implicitly_wait(1)
+                
+
+                # self.browser.find_element_by_xpath('//*[@id="site_rca"]/div[2]/label[@for="rc_a_02"]').click()
+                # self.browser.find_element_by_xpath('//*[@id="site_rca"]/div[2]/label').click()
+                # self.browser.find_element_by_xpath('//*[@id="site_rca"]/div/lable[@for="rc_a_02"]').click()
+                self.browser.find_element_by_xpath('//*[@id="'+zone+'"]/div[@class="check_comn '+inputvalue[0]+'"]/label[@for="'+inputvalue[0]+'"]').click()
+                element = WebDriverWait(self.browser, 10).until(
+                    EC.presence_of_element_located((By.ID, "reservForm"))
+                ) 
+                self.browser.implicitly_wait(1)
+
+                # 인원수
+                select = Select(self.browser.find_element_by_xpath('//*[@id="reservForm"]/div[1]/div/table/tbody/tr[1]/td[4]/select'))
+                # select.selectByVisibleText("Banana");
+                select.select_by_index(4)
+                # 예약버튼
+                self.browser.find_element_by_xpath('/html/body/div[4]/div[1]/div/div[9]/div[2]/button').click()
+                element = WebDriverWait(self.browser, 10).until(
+                    EC.presence_of_element_located((By.ID, "order_info"))
+                ) 
+                self.browser.implicitly_wait(1)
+
+
+                # self.browser.findElement(By.name("r_name")).sendKeys("박대규")		
+                # self.browser.findElement(By.name("r_hp")).sendKeys("01022610993")		
+                # self.browser.findElement(By.name("r_email")).sendKeys("박대규")		
+                # self.browser.findElement(By.name("r_jumin1")).sendKeys("박대규")		
+                # self.browser.findElement(By.name("r_car[]")).sendKeys("박대규")		
+
+                self.browser.find_element_by_name("r_name").send_keys('박대규')
+                self.browser.find_element_by_name("r_hp").send_keys('01022610993')
+                self.browser.find_element_by_name("r_email").send_keys('mamma1234@naver.com')
+                self.browser.find_element_by_name("r_jumin1").send_keys('750911')
+                self.browser.find_element_by_name("r_car[]").send_keys('275주6654')
+
+
+                self.browser.find_element_by_xpath('//*[@id="order_info"]/div[13]/label').click()
+                self.browser.find_element_by_xpath('//*[@id="order_info"]/div[15]/label').click()
+                self.browser.find_element_by_xpath('//*[@id="order_info"]/div[16]/label').click()
+
+                # WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input.username[name='username'][placeholder='Enter your username']"))).send_keys("Gen Tan")
+
+                # //*[@id="reservForm"]/div[1]/div/table/tbody/tr[1]/td[4]/select/option[5]
+
+                # select = Select(self.browser.find_element_by_xpath('//*[@id="reservForm"]/div[1]/div/table/tbody/tr[1]/td[4]/select'))
+                # # select.selectByVisibleText("Banana");
+                # select.selectByIndex(4)
+                
+                # self.browser.find_element_by_xpath('/html/body/div[4]/div[1]/div/div[9]/div[2]/button').click()
+
+
+                # self.browser.find_element_by_xpath('//*[@id="contents"]/div/div[7]/label/em').click()
+
+                    # //*[@id="site_rca"]/div[2]
+                # self.browser.find_element_by_css_selector('//*[@id="site_rca"]/div[2]/label').click()
                 # selenium.check("//input[@name=’checkboxes[]’ and @value=’cb3’]");
 
                 
@@ -226,8 +295,8 @@ class ImjingakSpider(scrapy.Spider):
                 # self.browser.find_element_by_xpath('/html/body/div[4]/div[1]/div/div[8]/div[7]/div[2]/input').click()
                 # self.browser.find_element_by_xpath('//*[@id="'+zone+'"]/div//*[@id="rc_a_02"]').click()
                 # self.browser.find_element_by_xpath('//*[@id="'+inputid[0]+'"]').click()
-                self.browser.implicitly_wait(5)
-                time.sleep(3)
+                # self.browser.implicitly_wait(5)
+                # time.sleep(20)
 
                 return emptys
 
