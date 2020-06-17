@@ -39,10 +39,10 @@ def getSaturday():
 
     return thissaturday, nextsaturday
 
-class PyeongtaekSpider(scrapy.Spider):
-    name = 'pyeongtaek_spider'
-    allowed_domains = ['ticket.interpark.com']
-    start_urls = ['http://ticket.interpark.com/Ticket/Goods/GoodsInfo.asp?GoodsCode=17009910&Point=N&TikiAutoPop=#']
+class CampunakSpider(scrapy.Spider):
+    name = 'campunak_spider'
+    allowed_domains = ['www.campunak.co.kr']
+    start_urls = ['https://www.campunak.co.kr/login.aspx?reurl=/Reservation2/Reservation_Site.aspx']
 
     def __init__(self):
         scrapy.Spider.__init__(self)
@@ -52,6 +52,47 @@ class PyeongtaekSpider(scrapy.Spider):
     def parse(self, response):
         self.browser.get(response.url)
         time.sleep(1)
+
+
+        self.browser.find_element_by_xpath('//*[@id="ContentMain_txtUserID"]').send_keys('mamma1234@naver.com')
+        self.browser.find_element_by_xpath('//*[@id="ContentMain_txtUserPW"]').send_keys('7PhLU!LBr6d9Cn@')
+        self.browser.find_element_by_xpath('//*[@id="ContentMain_btnMemberLogin"]').click()
+        element = WebDriverWait(self.browser, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="txtMemberTel"]')) 
+        )
+
+        self.browser.get('https://www.campunak.co.kr/Reservation2/Reservation_Site.aspx')
+        element = WebDriverWait(self.browser, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="form1"]/div[5]')) 
+        )  
+        time.sleep(5)
+
+        # self.browser.switch_to_frame(0)
+        # self.browser.find_element_by_xpath('//*[@id="ContentMain_txtSdate"]').click()
+        
+        # self.browser.find_element_by_name('ctl00$ContentMain$txtSdate').click()
+        date = self.browser.find_element_by_xpath("//div[@class='input _date-depart']/div[@class='ui-calendar']/input").click()
+
+        # self.browser.find_element_by_xpath('//*[@id="ContentMain_txtSdate"]').send_keys('06192020')
+        # self.browser.find_element_by_xpath('//*[@id="ContentMain_txtSdate"]').send_keys('06')
+        # self.browser.find_element_by_xpath('//*[@id="ContentMain_txtSdate"]').send_keys('19')
+        time.sleep(5)
+        # self.browser.find_element_by_xpath('//*[@id="ContentMain_txtEdate"]').send_keys('06202020')
+
+
+        # time.sleep(5)
+
+
+        # self.browser.find_element_by_xpath('//*[@id="ContentMain_aSite"]').click()
+        # element = WebDriverWait(self.browser, 10).until(
+        #     EC.presence_of_element_located((By.XPATH, '//*[@id="form1"]/div[5]')) 
+        # )  
+
+
+        time.sleep(5)
+
+
+
 
         main_window_handle = self.browser.current_window_handle
 
