@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
+
 from scrapy.selector import Selector
 from camping.items import CampingItem
 
@@ -27,15 +28,18 @@ def getSaturday():
     cal = calendar.monthcalendar(thisyear, thismonth)
     for week in cal:
         # THURSDAY
+        # if week[calendar.THURSDAY]:
+        #     print('%2s: %2s' % (str(thismonth).zfill(2), str(week[calendar.SATURDAY]).zfill(2)))
+        #     thissaturday.append({'year':thisyear, 'month': thismonth, 'day':week[calendar.THURSDAY], 'day2':week[calendar.FRIDAY]})
+
         if week[calendar.SATURDAY]:
-            # print('%2s: %2s' % (str(thismonth).zfill(2), str(week[calendar.SATURDAY]).zfill(2)))
-            thissaturday.append({'year':thisyear, 'month': thismonth, 'day':week[calendar.SATURDAY]})
+            thissaturday.append({'year':thisyear, 'month': thismonth, 'day':week[calendar.SATURDAY], 'day2':week[calendar.SUNDAY]})
 
     cal = calendar.monthcalendar(nextyear, nextmonth)
     for week in cal:
         if week[calendar.SATURDAY]:
             # print('%2s: %2s' % (str(nextmonth).zfill(2), str(week[calendar.SATURDAY]).zfill(2)))
-            nextsaturday.append({'year':nextyear, 'month': nextmonth, 'day':week[calendar.SATURDAY]})
+            nextsaturday.append({'year':nextyear, 'month': nextmonth, 'day':week[calendar.SATURDAY], 'day2':week[calendar.SUNDAY]})
 
     return thissaturday, nextsaturday
 
@@ -65,106 +69,46 @@ class CampunakSpider(scrapy.Spider):
         element = WebDriverWait(self.browser, 10).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="form1"]/div[5]')) 
         )  
-        time.sleep(5)
-
-        # self.browser.switch_to_frame(0)
-        # self.browser.find_element_by_xpath('//*[@id="ContentMain_txtSdate"]').click()
-        
-        # self.browser.find_element_by_name('ctl00$ContentMain$txtSdate').click()
-        date = self.browser.find_element_by_xpath("//div[@class='input _date-depart']/div[@class='ui-calendar']/input").click()
-
-        # self.browser.find_element_by_xpath('//*[@id="ContentMain_txtSdate"]').send_keys('06192020')
-        # self.browser.find_element_by_xpath('//*[@id="ContentMain_txtSdate"]').send_keys('06')
-        # self.browser.find_element_by_xpath('//*[@id="ContentMain_txtSdate"]').send_keys('19')
-        time.sleep(5)
-        # self.browser.find_element_by_xpath('//*[@id="ContentMain_txtEdate"]').send_keys('06202020')
-
-
         # time.sleep(5)
 
+        print("data:", getSaturday())
 
-        # self.browser.find_element_by_xpath('//*[@id="ContentMain_aSite"]').click()
-        # element = WebDriverWait(self.browser, 10).until(
-        #     EC.presence_of_element_located((By.XPATH, '//*[@id="form1"]/div[5]')) 
-        # )  
-
-
-        time.sleep(5)
-
-
-
-
-        main_window_handle = self.browser.current_window_handle
-
-        self.browser.find_element_by_xpath('//*[@id="imgLogin"]').click()
-        element = WebDriverWait(self.browser, 20).until(
-            # EC.presence_of_element_located((By.ID, "loginWrap"))
-            EC.presence_of_element_located((By.XPATH, '//*[@id="loginAllWrap"]/div[2]/iframe[starts-with(@src, "https://accounts.interpark.com/authorize/ticket-pc")]'))
-            
-        )  
-        self.browser.switch_to_frame(0)
-        # WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, "//iframe[starts-with(@src, 'http://thunder/spidio.net/CF9F4DA6B7533431/devinfo/devdect')]")))
-
-#loginAllWrap > div.leftLoginBox > iframe
-# https://accounts.interpark.com/authorize/ticket-pc?origin=https%3A%2F%2Fticket%2Einterpark%2Ecom%2FGate%2FTPLoginConfirmGate%2Easp%3FGroupCode%3D%26Tiki%3D%26Point%3D%26PlayDate%3D%26PlaySeq%3D%26HeartYN%3D%26TikiAutoPop%3D%26BookingBizCode%3D%26MemBizCD%3DWEBBR%26CPage%3DB%26GPage%3Dhttp%253A%252F%252Fticket%252Einterpark%252Ecom%252F&postProc=IFRAME
-        # time.sleep(5)
-        self.browser.find_element_by_xpath('/html/body/form[1]/div/div/div[1]/ul/li[1]/div/input').send_keys('mamma0911')
-        self.browser.find_element_by_xpath('//*[@id="userPwd"]').send_keys('qkrghwls0!')
-        self.browser.find_element_by_xpath('//*[@id="btn_login"]').click()
-
-        element = WebDriverWait(self.browser, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "DT_Rarea"))
-        )  
-        self.browser.find_element_by_xpath('/html/body/div[9]/div[2]/div[3]/div/div[2]/div/div[2]/div[5]/a').click()
-
-        
-        signin_window_handle = None
-        while not signin_window_handle:
-            for handle in self.browser.window_handles:
-                if handle != main_window_handle:
-                    signin_window_handle = handle
-                    break
-        self.browser.switch_to.window(signin_window_handle)
-
-        self.browser.find_element_by_xpath('//*[@id="divBookNotice"]/div/div/span/a/img').click()
-
-
-        # thissaturday, nextsaturday = getSaturday()
+        thissaturday, nextsaturday = getSaturday()
+        thissaturday.extend(nextsaturday)
+        now=date.today()
 
         emptys=[]
-        # for loop in [2]:
-        for loop in [1, 2]:
-            if loop == 2:
-                css = '#BookingDateTime > a'
-                self.browser.find_element_by_css_selector(css).click()
-                # self.browser.implicitly_wait(5)
-                # thissaturday = nextsaturday
-                time.sleep(1)
+        for saturday in thissaturday:
+            rflag = True
+            try:
+                print('saturday:', saturday)
+                # print( now.year, now.month, now.day)
+                if saturday['year'] >= now.year and saturday['month'] >= now.month and saturday['day'] >= now.day:
+                    print('now over')
+                else:
+                    continue
 
-            weeks = [1,2,3,4,5] #주차
-            Saturday = 5 #7 토요일
-            for week in reversed(weeks):
+                day = str(saturday['year'])+"-"+str(saturday['month']).zfill(2)+"-"+str(saturday['day']).zfill(2)
+                day2 = str(saturday['year'])+"-"+str(saturday['month']).zfill(2)+"-"+str(saturday['day2']).zfill(2)
+                self.browser.execute_script("document.getElementById('ContentMain_txtSdate').setAttribute('value','"+day+"')")
+                self.browser.execute_script("document.getElementById('ContentMain_txtEdate').setAttribute('value','"+day2+"')")
+                # self.browser.execute_script("__doPostBack('ctl00$ContentMain$txtSdate','')")
+                self.browser.find_element_by_xpath('//*[@id="ContentMain_btnSearch"]').click()
+
+
                 try:
-                    print('======================>', week)
-                    
-                    path = '//*[@id="BookingDateTime"]/div/table/tbody/tr['+str(week)+']/td['+str(Saturday)+']/a'
-                    self.browser.find_element_by_xpath(path).click()
-                    time.sleep(1)
+                    alert = self.browser.switch_to.alert
+                    alert.accept()
+                    rflag = False
+                except Exception as identifier:
+                    print("Processing Exception:", identifier)  
+                    pass
 
-                    select = Select(self.browser.find_element_by_xpath('//*[@id="SelectCheckIn"]'))
-                    # select.selectByVisibleText("Banana");
-                    select.select_by_index(1)
-                    element = WebDriverWait(self.browser, 10).until(
-                        EC.presence_of_element_located((By.XPATH, '//*[@id="SeatRemainNotice"]/dl[1]'))
-                    )  
+                print('rflag', rflag)
 
-                    
-
-                    # self.browser.implicitly_wait(2)
-                    # print(click)
-
+                if rflag == True:
                     # time.sleep(5)
-                    empty = self.search()
+                    empty = self.search(day)
                     if len(empty) > 0:
                         emptys.extend(empty)
 
@@ -176,9 +120,9 @@ class CampunakSpider(scrapy.Spider):
                         return emptys
 
 
-                except Exception as identifier:
-                    print("Processing Exception:", identifier)
-                    # pass
+            except Exception as identifier:
+                print("Processing Exception:", identifier)
+                # pass
 
         print('--------------------------------------------')
         print('emptys:', emptys)
@@ -189,90 +133,58 @@ class CampunakSpider(scrapy.Spider):
         return emptys
         # pass
 
-    def search(self):
+    def search(self, day):
         emptys = []
 
         html = self.browser.find_element_by_xpath('//*').get_attribute('outerHTML')
         selector = Selector(text=html)
-
         
-        emptycnt1 = selector.xpath('//*[@id="SeatRemainNotice"]/dl[1]/dd/em/text()').extract()
-        emptycnt2 = selector.xpath('//*[@id="SeatRemainNotice"]/dl[2]/dd/em/text()').extract()
-        
-        print(emptycnt1, emptycnt2)
+        groups = selector.xpath('//*[@id="ContentMain_divSiteOption"]/div[@class="site_choice"]')
 
-        if emptycnt1 != '0' or emptycnt2 != '0':
-            day = selector.xpath('//td/a[@id="CellPlayDate" and @class="selOn"]/@onclick').extract()
-            print(day)
-            # print('click =============>', day[0], '<=============')
-            # rows = selector.xpath('//*[@id="contents"]/div[3]/div[2]/div/img/@alt').extract()
+# A, B 사이트 제외
+        for group in groups[2:]:
+            # print('group', group.extract())
+            rows = group.xpath('ul/a')
+            # print('rows', rows)
             
-            
-            # groups = [1,2,3,4]
-            groups = [1]
-            for group in groups:
-                # self.browser.switch_to.default_content()
-                self.browser.switch_to_frame('ifrmSeat')
+            try:
+                for row in rows:
+                    # print('row', row)
+                    # row.select
 
-                self.browser.find_element_by_xpath('//*[@id="Map"]/area['+str(group)+']').click()
-                element = WebDriverWait(self.browser, 10).until(
-                    EC.presence_of_element_located((By.XPATH, '//*[@id="MainMap"]'))
-                )  
-                self.browser.switch_to.default_content()
-                self.browser.switch_to_frame('ifrmSeat')
+                    alt = row.xpath('@href').extract()
+                    id = row.xpath('@id').extract()
+                    # print(alt, ":", id)
+                    # if "시설 약도" not in alt[0] and "예약완료" not in alt[0]:
+                    #     # emptys.append({'day':day, 'row': row})
 
-                html = self.browser.find_element_by_xpath('//*').get_attribute('outerHTML')
-                selector = Selector(text=html)
-                rows = selector.xpath('/html/body/table/tbody/tr/td/div/div/img[@class="stySeat"]')
-                # rows = selector.xpath('/html/body/table/tbody/tr/td/div/div/img[@class="stySelectSeat"]')
-
-                
-                try:
-                    for row in reversed(rows):
-                        print(row)
-                        # row.select
-
-                        alt = row.xpath('@alt').extract()
-                        # id = row.xpath('@id').extract()
-                        # print(alt, ":", id)
-                        # if "시설 약도" not in alt[0] and "예약완료" not in alt[0]:
-                        #     # emptys.append({'day':day, 'row': row})
-
+                    if len(alt) > 0:
                         empty = CampingItem()
                         empty['day']=day
-                        empty['group']=group
+                        empty['group']=id[0] #group
                         empty['row']=alt
                         emptys.append(empty)
-        # //*[@id="SID0"]
-                        # self.browser.find_element_by_xpath('/html/body/table/tbody/tr/td/div/div/img[@class="stySelectSeat"] and @id="'+str(id)+'"]').click()
-                        self.browser.find_element_by_xpath('//*[@id="map"]/img[@class="stySeat" and @alt="'+alt[0]+'"]').click()                
-                        self.browser.find_element_by_xpath('//*[@id="NextStepImage"]').click()
-                        # element = WebDriverWait(self.browser, 10).until(
-                        #     EC.presence_of_element_located((By.XPATH, '//*[@id="layer1"]'))
-                        # )  
-                        time.sleep(2)
+
+                        self.browser.execute_script(alt[0])
+                        # print('data', empty)
+
                         element = WebDriverWait(self.browser, 10).until(
-                            EC.visibility_of_element_located((By.ID, "divBookStep"))
-                        #     EC.presence_of_element_located((By.ID, "divBookStep"))
-                        # #     EC.presence_of_element_located((By.XPATH, '//*[@id="ifrmBookStep"]'))
+                            EC.presence_of_element_located((By.XPATH, '//*[@id="ContentMain_divRsrv"]')) 
                         )
-                        self.browser.switch_to.default_content()
-                        self.browser.switch_to_frame('ifrmBookStep') #ifrmBookStep
-                        # self.browser.find_element_by_xpath('//*[@id="PriceType"]').click()
-                        self.browser.find_element_by_css_selector("input[type='radio'][value='1']").click()
-                        # self.browser.find_element_by_xpath('//*[@id="li1"]/span[1]/label').click()
-                        # self.browser.find_element_by_xpath('//*[@id="PriceType"]').click()
-                        
-                        self.browser.find_element_by_xpath('//*[@id="NextStepImage"]').click()
-                        time.sleep(2)
-                                                        
-                                                        
 
-                        # return emptys
-                except Exception as identifier:
-                    print("Processing Exception:", identifier)
-                    pass
+                        self.browser.find_element_by_xpath('//*[@id="ContentMain_divRsrv"]/div[4]/label').click()
+                        self.browser.find_element_by_xpath('//*[@id="ContentMain_divRsrv"]/div[5]/label').click()
 
-                # self.browser.switch_to.default_content()
-            
+                        # self.browser.find_element_by_xpath('//*[@id="ContentMain_btnPayNow"]').click()
+
+
+                        time.sleep(5)
+
+                        return emptys
+            except Exception as identifier:
+                print("Processing Exception:", identifier)
+                pass
+
+            # self.browser.switch_to.default_content()
+        
         return emptys

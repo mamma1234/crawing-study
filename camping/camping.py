@@ -6,6 +6,7 @@ from camping.spiders.gangdong_spider import GangdongSpider
 from camping.spiders.joongrangsoop_spider import JoongrangsoopSpiderSpider
 from camping.spiders.imjingak_spider import ImjingakSpider
 from camping.spiders.pyeongtaek_spider import PyeongtaekSpider
+from camping.spiders.campunak_spider import CampunakSpider
 
 
 from datetime import date
@@ -24,6 +25,7 @@ try:
     scheduler.add_job(process.crawl, 'interval', args=[JoongrangsoopSpiderSpider], seconds=15)
     # scheduler.add_job(process.crawl, 'interval', args=[ImjingakSpider], seconds=15)
     # scheduler.add_job(process.crawl, 'interval', args=[PyeongtaekSpider], seconds=15)
+    scheduler.add_job(process.crawl, 'interval', args=[CampunakSpider], seconds=15)
     scheduler.start()
     process.start(False)
 except (KeyboardInterrupt, SystemExit):
