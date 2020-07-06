@@ -86,6 +86,9 @@ class JoongrangsoopSpiderSpider(scrapy.Spider):
         # thissaturday, nextsaturday = getSaturday()
         # print(thissaturday, nextsaturday)
 
+        
+        self.browser.find_element_by_xpath('//*[@id="notice_layer_592"]/div/div/div/fieldset/ul/li/button').click()
+
         self.browser.find_element_by_xpath('//*[@id="login_id"]').send_keys('mamma1234')
         self.browser.find_element_by_xpath('//*[@id="login_passwd"]').send_keys('qkrtjgml0!')
         self.browser.find_element_by_xpath('//*[@id="header"]/div[2]/fieldset/form/ul[1]/li[3]/a').click()
@@ -93,8 +96,8 @@ class JoongrangsoopSpiderSpider(scrapy.Spider):
 
 
         emptys=[]
-        # for loop in [2]:
-        for loop in [1, 2]:
+        for loop in [2]:
+        # for loop in [1, 2]:
             if loop == 2:
                 css = '#contents > div.aside > div.calendar_box > div.calendar_paginate_box > ul.calendar_paginate > li.next > a'
                 self.browser.find_element_by_css_selector(css).click()
